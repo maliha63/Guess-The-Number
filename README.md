@@ -7,7 +7,7 @@ Guess The Number is a sleek, logic-based web application where players try to id
 ---
 
 ## 🎮 Preview
-![Guess The Number Gameplay](<img width="1366" height="768" alt="Guess_The_Number" src="https://github.com/user-attachments/assets/bcc1acf7-2d17-4081-963e-cbc384f6d3d4" />
+(<img width="1366" height="768" alt="Guess_The_Number" src="https://github.com/user-attachments/assets/bcc1acf7-2d17-4081-963e-cbc384f6d3d4" />
 )
 *An overview of the game interface showing the score system and gameplay area.*
 
