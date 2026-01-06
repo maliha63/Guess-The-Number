@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GUESS MY NUMBER!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="https://github.com/KiranPolaki/GuessTheNumber-Game-JS/blob/main/images/guess%20number.png?raw=true" type="image/x-icon">
+  <style>
+    :root {
+      --bg-color: #222;
+      --text-color: #eee;
+      --pixel-border: 4px solid #eee;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Press Start 2P', cursive;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      height: 100vh; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.2s ease;
+      overflow: visible; 
+    }
+
+    .wrong-answer {
+      background-color: #8b0000 !important;
+    }
+
+    header {
+      width: 90%;
+      max-width: 1200px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 0;
+    }
+
+    .btn {
+      background-color: #eee;
+      color: #222;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .btn:hover {
+      background-color: #ccc;
+    }
+
+    .between {
+      font-size: 0.8rem;
+    }
+
+    #inputRange {
+      background: none;
+      border: 2px solid #eee;
+      color: #eee;
+      width: 60px;
+      padding: 5px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .hero-section {
+      text-align: center;
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .number-display {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .line {
+      width: 100%;
+      height: 4px;
+      background-color: #eee;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      z-index: 1;
+    }
+
+    .number {
+      background-color: #eee;
+      color: #333;
+      font-size: 4rem;
+      width: 12rem;
+      height: 6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: width 0.4s ease;
+    }
+
+    main {
+      width: 80%;
+      max-width: 1000px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      margin-top: 3rem;
+    }
+
+    .left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .right {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding-left: 2rem;
+    }
+
+    .guess {
+      background: none;
+      border: var(--pixel-border);
+      font-family: inherit;
+      color: inherit;
+      font-size: 4rem;
+      padding: 1.5rem;
+      width: 14rem;
+      text-align: center;
+      display: block;
+    }
+
+    .message {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .label-score, .label-highscore {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .new-range {
+      color: #60b347;
+      text-shadow: 0 0 10px #60b347;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <button class="btn again">Again!</button>
+    <p class="between">(Between 1 and <input type="number" id="inputRange" value="20"> )</p>
+  </header>
+
+  <section class="hero-section">
+    <h1>Guess My Number!</h1>
+    <div class="number-display">
+      <div class="line"></div>
+      <div class="number">?</div>
+    </div>
+  </section>
+
+  <main>
+    <section class="left">
+      <input type="number" class="guess" id="inputGuess">
+      <button class="btn check" id="check">Check!</button>
+    </section>
+
+    <section class="right">
+      <p class="message">Start guessing...</p>
+      <p class="label-score">💯 Score: <span class="score">20</span></p>
+      <p class="label-highscore">🥇 Highscore: <span class="highscore">0</span></p>
+    </section>
+  </main>
+
+  <script>
+    const range = document.getElementById("inputRange");
+    const inputGuess = document.getElementById("inputGuess");
+    const message = document.querySelector(".message");
+    const scoreDisplay = document.querySelector(".score");
+    const highScoreDisplay = document.querySelector(".highscore");
+    const numberDisplay = document.querySelector(".number");
+    const body = document.querySelector("body");
+
+    let secretNumber;
+    let score = 20;
+    // Load highscore as a Number to allow math operations
+    let highScore = Number(sessionStorage.getItem("highScore")) || 0;
+
+    highScoreDisplay.textContent = highScore;
+
+    function initGame() {
+      const max = Number(range.value);
+      secretNumber = Math.floor(Math.random() * max) + 1;
+      score = 20;
+      
+      scoreDisplay.textContent = score;
+      numberDisplay.textContent = "?";
+      numberDisplay.style.width = "12rem";
+      body.style.backgroundColor = "#222";
+      inputGuess.value = "";
+      message.textContent = "Start guessing...";
+      message.classList.remove("new-range");
+      
+      console.log(`Secret Number: ${secretNumber}`);
+    }
+
+    range.addEventListener("change", function() {
+      if (this.value < 2) {
+        message.textContent = "Range too small! 🤏";
+        this.value = 2;
+      }
+      initGame();
+      message.textContent = "New range set! 🚀";
+      message.classList.add("new-range");
+    });
+
+    function flashScreen(color) {
+      const originalColor = body.style.backgroundColor;
+      body.style.backgroundColor = color;
+      setTimeout(() => {
+        body.style.backgroundColor = originalColor;
+      }, 100);
+    }
+
+    document.querySelector(".check").addEventListener("click", function () {
+      const guess = Number(inputGuess.value);
+      message.classList.remove("new-range");
+
+      if (!inputGuess.value) {
+        const funnies = [
+            "🧐 Enter a number!",
+            "🔮 Psychic test failed!",
+            "🏖️ Keyboard holiday?",
+            "👻 Empty input!",
+            "👁️ Type something!"
+        ];
+        message.textContent = funnies[Math.floor(Math.random() * funnies.length)];
+      } 
+      else if (guess === secretNumber) {
+        message.textContent = "🙌 Correct Answer!";
+        numberDisplay.textContent = secretNumber;
+        numberDisplay.style.width = "25rem";
+        body.style.backgroundColor = "#60b347";
+
+        // Logic Change: Increase Highscore cumulatively
+        highScore += score; 
+        highScoreDisplay.textContent = highScore;
+        sessionStorage.setItem("highScore", highScore);
+      } 
+      else {
+        const diff = Math.abs(guess - secretNumber);
+        
+        if (diff <= 2) {
+          message.textContent = "😬 It's close!";
+        } else if (score > 1) {
+          message.textContent = guess > secretNumber ? "📈 Tooo High!" : "📉 Tooo Low!";
+          score--;
+          scoreDisplay.textContent = score;
+          flashScreen("#8b0000"); // Red flash for wrong answer
+        } else {
+          message.textContent = "🤷‍♂️ You lost the game!";
+          scoreDisplay.textContent = "0";
+          numberDisplay.textContent = secretNumber;
+          body.style.backgroundColor = "darkred";
+        }
+      }
+    });
+
+    document.querySelector(".again").addEventListener("click", initGame);
+
+    inputGuess.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("check").click();
+      }
+    });
+
+    range.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        range.blur();
+      }
+    });
+
+    initGame();
+  </script>
+</body>
+</html>
