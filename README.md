@@ -71,20 +71,6 @@ The app follows a simple state management flow:
 
 ---
 
-## 📁 Project Structure
-
-```
-Guess-The-Number
-├── Public/             # Static assets
-├── index.html          # Main game entry point
-├── practice.html       # Development sandbox
-├── style.css           # Custom styling
-├── script.js           # Core game logic
-├── firebase.json       # Deployment configuration
-└── README.md
-```
-
----
 
 ## 🔮 Roadmap & Future Enhancements
 
